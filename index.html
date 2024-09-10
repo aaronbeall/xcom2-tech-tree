@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XCOM 2 Tech Tree</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.15/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.4.17/dagre-d3.min.js"></script>
+</head>
+<body>
+<h1 class="pull-left">XCOM 2 Tech Tree</h1>
+<a class="pull-right" href="https://github.com/darosh/xcom2-tech-tree">Github</a>
+<div class="clear"></div>
+<hr>
+<input class="pull-left" type="text" id="filter" autofocus>
+<div class="tools">
+    <a id="reset" class="pull-left" href="#">reset</a>
+    <a id="save" class="pull-left" href="#">save</a>
+    <a id="export" class="pull-left" href="#">export</a>
+    <a id="horizontal" class="pull-left" href="#">horizontal: off</a>
+    <a id="shortcuts" class="pull-left" href="#">shortcuts: on</a>
+</div>
+<svg class="legend pull-right">
+    <g></g>
+</svg>
+<div class="clear"></div>
+<hr>
+<svg class="chart" version="1.1">
+    <g></g>
+</svg>
+<div class="tooltip"></div>
+<script src="./xcom-tech-tree.min.js"></script>
+<script src="./svg.js"></script>
+<script src="./app.js"></script>
+<script>
+    run();
+</script>
+<a id="download" class="hide" href="#"></a>
+</body>
+</html>
