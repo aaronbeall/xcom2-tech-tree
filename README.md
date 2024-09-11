@@ -1,10 +1,12 @@
 # XCOM 2 Tech Tree
 
-Based on XML data from [mstum/xcom2](https://github.com/mstum/xcom2) project.
+Based on XML data from [darosh/xcom2-tech-tree](https://darosh.github.io/xcom2-tech-tree/) project.
 
-[Live version](https://darosh.github.io/xcom2-tech-tree/).
+[Live version](https://aaronbeall.github.io/xcom2-tech-tree/).
 
 ## Development
+
+The data was orignally pulled from an XML project that no longer exists and is now manually maintained in `xcom-tech-tree.min.js`.
 
 ### Install
 
@@ -12,18 +14,12 @@ Based on XML data from [mstum/xcom2](https://github.com/mstum/xcom2) project.
 npm install
 ```
 
-```
-bower install
-```
-
-### Build
-
-```
-gulp
-```
-
 ### Publish
 
 ```
-gulp publish
+npm run pubish
 ```
+
+### Deprecated
+
+All the `gulp` stuff is no longer used or works.
