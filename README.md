@@ -1,6 +1,6 @@
 # XCOM 2 Tech Tree
 
-Based on XML data from [darosh/xcom2-tech-tree](https://darosh.github.io/xcom2-tech-tree/) project.
+Based on the excellent [XCOM 2 Tech Tree project from darosh](https://darosh.github.io/xcom2-tech-tree/). Updated to add all DLC content (War of the Chosen, Alien Hunters, and Tactical Legacy Pack).
 
 [Live version](https://aaronbeall.github.io/xcom2-tech-tree/).
 
