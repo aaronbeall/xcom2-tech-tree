@@ -25,26 +25,36 @@ hr {
     background: #ccc;
 }
 
-input {
-    height: 22px;
+.top {
+    position: sticky;
 }
 
-.tools a {
+.header {
+    display: flex;
+}
+
+.header h1 {
+    margin-left: 10px;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 14px;
+}
+
+.tools-label {
     display: block;
-    margin-top: 5px;
-    margin-left: 14px;
+    font-size: 12px;
+    font-weight: bold;
+    border-left: 1px solid lightgray;
+    margin-left: 10px;
+    padding-left: 5px;
 }
 
-.pull-left {
-    float: left;
-}
-
-.pull-right {
-    float: right;
-}
-
-.clear {
-    clear: both;
+.tools-label:first-child {
+    margin-left: 0;
 }
 
 .hide {
@@ -88,6 +98,11 @@ text {
 .legend > * {
     cursor: pointer;
     font-style: italic;
+    font-size: 14px;
+}
+
+.chart-wrapper {
+    width: 100%;
 }
 
 .chart > * {
@@ -130,36 +145,51 @@ td {
 }
 
 .building {
-    fill: #bfeda8;
-    background-color: #bfeda8;
+    fill: #e0e0ff;
+    background-color: #e0e0ff;
 }
 
 .research {
-    fill: #eda6af;
-    background-color: #eda6af;
+    fill: #ffe0e0;
+    background-color: #ffe0e0;
 }
 
 .proving {
-    fill: #eddaa6;
-    background-color: #eddaa6;
+    fill: #e0ffe0;
+    background-color: #e0ffe0;
 }
 
 .item {
-    fill: #a6deed;
-    background-color: #a6deed;
+    fill: #f6ffe0;
+    background-color: #f6ffe0;
 }
 
 .drop {
-    fill: #eda6ed;
-    background-color: #eda6ed;
-}
-
-.misc {
-    fill: #cccccc;
-    background-color: #cccccc;
+    fill: #e0ffff;
+    background-color: #e0ffff;
 }
 
 .skill {
     fill: #f0f0f0;
     background-color: #f0f0f0;
+}
+
+.mission {
+    fill: #cccccc;
+    background-color: #cccccc;
+}
+
+.enhancement {
+    fill: #fefef0;
+    background-color: #fefef0;
+}
+
+.region {
+    fill: #fef0fe;
+    background-color: #fef0fe;
+}
+
+.kill {
+    fill: #ff9090;
+    background-color: #fff0f0;
 }
