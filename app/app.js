@@ -6,7 +6,7 @@ const SVG = d3.select('svg.chart');
 const ROOT = SVG.select('g');
 const TOOLTIP = d3.select('.tooltip');
 const FILTER = d3.select('#filter');
-let SHORTCUTS = true;
+let TRUNCATE_PATHS = true;
 let HORIZONTAL = false;
 
 const TYPE_INFO = {
@@ -22,6 +22,14 @@ const TYPE_INFO = {
     "kill": { icon: "👽", name: "Kill", description: "Alien nuetralized during a mission" },
 }
 const TYPES = Object.keys(TYPE_INFO);
+
+const DLC_INFO = {
+    "wotc": { name: "War of the Chosen", abbr: "WotC" },
+    "ah": { name: "Alien Hunters", abbr: "AH" },
+    "tlp": { name: "Tactical Legacy Pack", abbr: "TLP" },
+}
+const DLC = Object.keys(DLC_INFO);
+const DLC_ENABLED = DLC.reduce((obj, key) => ({ ...obj, [key]: true }), {});
 
 function run() {
     LEGEND_GRAPH = legend();
@@ -90,7 +98,7 @@ function chart() {
         const radius = item.parent ? 11 : 0;
 
         if (!item.hide) {
-            const disabled = SHORTCUTS && item.disable;
+            const disabled = TRUNCATE_PATHS && item.disable;
 
             g.setNode(index, {
                 label: disabled ? '…' : `${ TYPE_INFO[item.type].icon } ${ item.title }`,
@@ -184,7 +192,9 @@ function update() {
 
     XCOM_TECH_TREE.forEach(item => {
         item.hide = false;
-        item.disable = DISABLED[item.type] || (filter && !(item.title.toLowerCase().indexOf(filter) > -1));
+        item.disable = DISABLED[item.type] 
+            || (filter && !(item.title.toLowerCase().indexOf(filter) > -1))
+            || (item.dlc && !DLC_ENABLED[item.dlc.toLowerCase()]);
     });
 
     hide();
@@ -401,7 +411,7 @@ function tools() {
 
     d3.select('#shortcuts')
         .on('click', () => {
-            SHORTCUTS = !SHORTCUTS;
+            TRUNCATE_PATHS = !TRUNCATE_PATHS;
             delayedUpdate();
         });
     
@@ -416,6 +426,24 @@ function tools() {
         .on("click", () => {
             TYPES.forEach(type => (DISABLED[type] = true));
             d3.select('svg.legend').selectAll(".node").classed('disabled', true);
+            delayedUpdate();
+        });
+    
+    d3.select("#dlc-wotc")
+        .on("click", () => {
+            DLC_ENABLED["wotc"] = !DLC_ENABLED["wotc"];
+            delayedUpdate();
+        });
+
+    d3.select("#dlc-ah")
+        .on("click", () => {
+            DLC_ENABLED["ah"] = !DLC_ENABLED["ah"];
+            delayedUpdate();
+        });
+
+    d3.select("#dlc-tlp")
+        .on("click", () => {
+            DLC_ENABLED["tlp"] = !DLC_ENABLED["tlp"];
             delayedUpdate();
         });
 }
