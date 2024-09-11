@@ -6,7 +6,7 @@ Based on XML data from [darosh/xcom2-tech-tree](https://darosh.github.io/xcom2-t
 
 ## Development
 
-The data was orignally pulled from an XML project that no longer exists and is now manually maintained in `xcom-tech-tree.min.js`.
+The data was orignally pulled from an [XML project](https://github.com/mstum/xcom2) that no longer exists, here the data is manually maintained in `xcom-tech-tree.min.js`.
 
 ### Install
 
@@ -22,4 +22,4 @@ npm run pubish
 
 ### Deprecated
 
-All the `gulp` stuff is no longer used or works.
+All the `gulp` and `bower` related stuff is no longer used.
