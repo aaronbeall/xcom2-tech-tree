@@ -1,6 +1,5 @@
 const DISABLED = {};
 let LEGEND_GRAPH;
-const TYPES = ['building', 'research', 'proving', 'item', 'drop', 'mission', 'enhancement', 'region', 'skill', 'kill'];
 let INITIALIZED = false;
 const RENDER = new dagreD3.render();
 const SVG = d3.select('svg.chart');
@@ -10,18 +9,19 @@ const FILTER = d3.select('#filter');
 let SHORTCUTS = true;
 let HORIZONTAL = false;
 
-const ICONS = {
-    "building": "🏗️",
-    "research": "🔬",
-    "proving": "🧪",
-    "item": "🔫",
-    "drop": "🫳",
-    "mission": "🧭",
-    "enhancement": "✨",
-    "region": "📡",
-    "skill": "🪖",
-    "kill": "👽"
+const TYPE_INFO = {
+    "building": { icon: "🏗️", name: "Building", description: "Avenger building" },
+    "research": { icon: "🔬", name: "Research", description: "Researcg project" },
+    "proving": { icon: "🧪", name: "Proving Grounds", description: "Proving Grounds project" },
+    "item": { icon: "🔫", name: "Item", description: "Engineering item (weapon, utility, armor, etc)" },
+    "drop": { icon: "🫳", name: "Drop", description: "Drop picked up in a mission" },
+    "mission": { icon: "🧭", name: "Mission", description: "Mission" },
+    "enhancement": { icon: "✨", name: "Enhancement", description: "Game mechanic enhancement" },
+    "region": { icon: "📡", name: "Region", description: "Region unlocked on geoscape" },
+    "skill": { icon: "🪖", name: "Skill", description: "GTS Skill" },
+    "kill": { icon: "👽", name: "Kill", description: "Alien nuetralized during a mission" },
 }
+const TYPES = Object.keys(TYPE_INFO);
 
 function run() {
     LEGEND_GRAPH = legend();
@@ -55,10 +55,11 @@ function legend() {
 
 
     TYPES.forEach((item, index) => {
+        const typeInfo = TYPE_INFO[item];
         g.setNode(index, {
-            label: `${ ICONS[item] } ${ item }`,
+            label: `${ typeInfo.icon } ${ typeInfo.name }`,
             class: item,
-            height: 22,
+            height: 20,
             paddingLeft: 14,
             paddingRight: 14,
             paddingTop: 0,
@@ -92,7 +93,7 @@ function chart() {
             const disabled = SHORTCUTS && item.disable;
 
             g.setNode(index, {
-                label: disabled ? '…' : `${ ICONS[item.type] } ${ item.title }`,
+                label: disabled ? '…' : `${ TYPE_INFO[item.type].icon } ${ item.title }`,
                 class: item.type + (disabled ? ' disabled' : ''),
                 height: 18,
                 rx: radius,
@@ -310,7 +311,7 @@ function tooltip() {
                 .attr('class', 'tooltip ' + item.type)
                 .html('<b>' + item.title + '</b>' +
                     '<br>' +
-                    '<i>' + item.type + '</i>' +
+                    '<i>' + TYPE_INFO[item.type].name + '</i>' +
                     (item.required ? '<hr>' +
                     '<table><tr><th>Required</th><td>' + item.required + '</td></tr></table>' : '') +
                     (item.table ? '<hr>' : '') +
