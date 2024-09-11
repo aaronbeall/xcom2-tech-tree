@@ -1,6 +1,6 @@
 var DISABLED = {};
 var LEGEND_GRAPH;
-var TYPES = ['building', 'research', 'proving', 'item', 'drop', 'misc', 'skill'];
+var TYPES = ['building', 'research', 'proving', 'item', 'drop', 'mission', 'enhancement', 'region', 'skill', 'kill'];
 var INITIALIZED = false;
 var RENDER = new dagreD3.render();
 var SVG = d3.select('svg.chart');
@@ -9,6 +9,19 @@ var DIV = d3.select('.tooltip');
 var FILTER = d3.select('#filter');
 var SHORTCUTS = true;
 var HORIZONTAL = false;
+
+const ICONS = {
+    "building": "🏗️",
+    "research": "🔬",
+    "proving": "🧪",
+    "item": "🔫",
+    "drop": "🫳",
+    "mission": "🧭",
+    "enhancement": "✨",
+    "region": "📡",
+    "skill": "🪖",
+    "kill": "👽"
+}
 
 function run() {
     LEGEND_GRAPH = legend();
@@ -43,7 +56,7 @@ function legend() {
 
     TYPES.forEach(function (item, index) {
         g.setNode(index, {
-            label: item,
+            label: `${ICONS[item]} ${item}`,
             class: item,
             height: 22,
             paddingLeft: 14,
@@ -68,8 +81,8 @@ function chart() {
     var g = new dagreD3.graphlib.Graph()
         .setGraph({
             rankdir: HORIZONTAL ? 'TB' : 'LR',
-            nodesep: 20,
-            ranksep: 20
+            nodesep: 10,
+            ranksep: 10
         });
 
     XCOM_TECH_TREE.forEach(function (item, index) {
@@ -79,9 +92,9 @@ function chart() {
             var d = SHORTCUTS && item.disable;
 
             g.setNode(index, {
-                label: d ? '…' : item.title,
+                label: d ? '…' : `${ICONS[item.type]} ${item.title}`,
                 class: item.type + (d ? ' disabled' : ''),
-                height: 22,
+                height: 18,
                 rx: radius,
                 ry: radius,
                 paddingLeft: 10,
@@ -128,6 +141,7 @@ function legendClicks() {
 
         DISABLED[TYPES[d]] = !DISABLED[TYPES[d]];
         e.classed('disabled', DISABLED[TYPES[d]]);
+        console.log(DISABLED)
         delayedUpdate();
     });
 }
@@ -390,23 +404,38 @@ function tools() {
 
     d3.select('#horizontal')
         .on('click', function () {
-            d3.event.preventDefault();
+            // d3.event.preventDefault();
             HORIZONTAL = !HORIZONTAL;
-            var s = d3.select(this);
-            var t = s.text();
-            t = t.replace(HORIZONTAL ? ': off' : ': on', !HORIZONTAL ? ': off' : ': on');
-            s.text(t);
+            // var s = d3.select(this);
+            // var t = s.text();
+            // t = t.replace(HORIZONTAL ? ': off' : ': on', !HORIZONTAL ? ': off' : ': on');
+            // s.text(t);
             delayedUpdate();
         });
 
     d3.select('#shortcuts')
         .on('click', function () {
-            d3.event.preventDefault();
+            // d3.event.preventDefault();
             SHORTCUTS = !SHORTCUTS;
-            var s = d3.select(this);
-            var t = s.text();
-            t = t.replace(SHORTCUTS ? ': off' : ': on', !SHORTCUTS ? ': off' : ': on');
-            s.text(t);
+            // var s = d3.select(this);
+            // var t = s.text();
+            // t = t.replace(SHORTCUTS ? ': off' : ': on', !SHORTCUTS ? ': off' : ': on');
+            // s.text(t);
+            delayedUpdate();
+        });
+    
+    d3.select("#all")
+        .on("click", () => {
+            DISABLED = {};
+            d3.select('svg.legend').selectAll(".node").classed('disabled', false);
+            delayedUpdate();
+        });
+
+    d3.select("#none")
+        .on("click", () => {
+            DISABLED = TYPES.reduce((obj, type) => ({ ...obj, [type]: true }), {});
+            console.log({ DISABLED })
+            d3.select('svg.legend').selectAll(".node").classed('disabled', true);
             delayedUpdate();
         });
 }
