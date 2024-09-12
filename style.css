@@ -59,6 +59,25 @@ hr {
     margin-left: 0;
 }
 
+.toggle span {
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 0 4px;
+    color: #666666;
+}
+
+.toggle input:checked+span {
+    border-color: #3366ff;
+    background: #3366ff;
+    color: white;
+}
+
+.toggle input {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+}
+
 .hide {
     display: none;
 }
