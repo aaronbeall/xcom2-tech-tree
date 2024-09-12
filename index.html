@@ -14,33 +14,34 @@
 <body>
     <a class="github-fork-ribbon" href="https://github.com/aaronbeall/xcom2-tech-tree" data-ribbon="Fork me on GitHub"
         title="Fork me on GitHub">Fork me on GitHub</a>
-    <div class="top">
         <div class="header">
             <img src="xcom.png" height="45">
             <h1>XCOM 2 Tech Tree</h1>
         </div>
-        <hr>
-        <div class="toolbar">
-            <input type="search" id="filter" autofocus placeholder="Search">
-            <button id="save" href="#">save</button>
-            <button id="export" href="#">export</button>
-            <span class="tools-label">Display:</span>
-            <label><input type="checkbox" id="horizontal">Horizontal</label>
-            <label><input type="checkbox" id="shortcuts" checked>Truncate filter paths</label>
-            <span class="tools-label">DLC:</span>
-            <label><input type="checkbox" checked disabled>War of the Chosen</label>
-            <label><input type="checkbox" checked disabled>Alien Hunters</label>
-            <label><input type="checkbox" checked disabled>Tactical Legacy Pack</label>
-        </div>
-        <div class="toolbar">
-            <span class="tools-label">Filter:</span>
-            <svg class="legend">
-                <g></g>
-            </svg>
-            <button id="all">All</button>
-            <button id="none">None</button>
-        </div>
-        <hr>
+        <div class="top">
+            <div class="toolbar">
+                <input type="search" id="filter" autofocus placeholder="Search">
+                <button id="save" href="#">save</button>
+                <button id="export" href="#">export</button>
+                <span class="tools-label">Display:</span>
+                <label><input type="checkbox" id="horizontal">↧ Horizontal</label>
+                <label><input type="checkbox" id="shortcuts" checked>⋯ Truncate filter paths</label>
+                <span class="tools-label">DLC:</span>
+                <label><input type="checkbox" id="dlc-wotc" checked>😈 War of the Chosen</label>
+                <small id="integrated-dlc">(<label><input type="checkbox" id="dlc-integrated" checked>Integrated DLC</label>)</small>
+                <label><input type="checkbox" id="dlc-ah" checked>👽 Alien Hunters</label>
+                <label><input type="checkbox" id="dlc-slg" checked>🤖 Shen's Last Gift</label>
+                <label><input type="checkbox" id="dlc-tlp" checked>🪖 Tactical Legacy Pack</label>
+            </div>
+            <div class="toolbar">
+                <span class="tools-label">Filter:</span>
+                <svg class="legend">
+                    <g></g>
+                </svg>
+                <button id="all">All</button>
+                <button id="none">None</button>
+            </div>
+            <hr>
     </div>
     <div class="chart-wrapper">
         <svg class="chart" version="1.1">
