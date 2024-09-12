@@ -20,7 +20,7 @@ const TYPE_INFO = {
     "enhancement": { icon: "✨", name: "Enhancement", fullname: "Game mechanic enhancement" },
     "region": { icon: "📡", name: "Region", fullname: "Scan unlocked on geoscape" },
     "skill": { icon: "🪖", name: "Skill", fullname: "GTS Skill" },
-    "kill": { icon: "👽", name: "Kill", fullname: "Alien nuetralized on mission" },
+    "kill": { icon: "👽", name: "Kill", fullname: "Neutralize alien on mission" },
 }
 const TYPES = Object.keys(TYPE_INFO);
 
@@ -41,7 +41,7 @@ const getDlcId = abbr => {
 function run() {
     LEGEND_GRAPH = legend();
     filter();
-    updateIntegrated();
+    updateTechTreeForDLC();
     chart();
     legendClicks();
     filterChange();
@@ -62,12 +62,21 @@ function hierarchy() {
     });
 }
 
-function resetHierarchy() {
-    XCOM_TECH_TREE.forEach(item => item.children && (item.children.length = 0));
+function updateHierarchy() {
+    XCOM_TECH_TREE.forEach(item => 
+        item.children && (item.children.length = 0)
+    );
+    hierarchy();
 }
 
-function updateIntegrated() {
+function updateTechTreeForDLC() {
     XCOM_TECH_TREE.forEach(item => {
+        Object.entries(DLC_INFO).forEach(([key, dlc]) => {
+            if (item[key]) {
+                const dlcEnabled = !!DLC_ENABLED[key];
+                Object.assign(item, item[key][dlcEnabled]);
+            }
+        })
         if (item.integrated) {
             Object.assign(item, item.integrated[INTEGRATED_DLC]);
         }
@@ -208,7 +217,7 @@ function update() {
     hideTooltip();
 
     filter();
-    updateIntegrated();
+    updateTechTreeForDLC();
     chart();
 }
 
@@ -313,6 +322,15 @@ function getCostTable(item) {
     return text;
 }
 
+function getSpecsTable(specs) {
+    return `<hr>
+    <table>
+    ${ Object.keys(specs).map(key =>
+        `<tr><th>${ key }:</th><td>${ specs[key] }</td></td>`
+    ).join("") }
+    </table>`;
+}
+
 function hideTooltip() {
     TOOLTIP
         .style('opacity', 0)
@@ -338,7 +356,7 @@ function tooltip() {
             const type = TYPE_INFO[item.type];
             const dlc = item.dlc && DLC_INFO[getDlcId(item.dlc)];
 
-            item.table = item.table || getCostTable(item);
+            item.costTable = item.costTable || getCostTable(item);
 
             TOOLTIP
                 .attr("class", `tooltip ${ item.type }`)
@@ -346,16 +364,32 @@ function tooltip() {
                     <br>
                     <i>${ type.icon } ${ type.fullname } </i>
                     ${ dlc ? `<i>${ dlc.icon } ${ dlc.name } DLC</i>` : "" }
+                    <small>
+                    ${ item.specs ? getSpecsTable(item.specs) : "" }
                     ${ item.required 
-                        ? `<hr>
-                            <table><tr><th>Required</th><td>${ item.required }</td></tr></table>` 
+                        ? `<hr><table><tr><th>Required</th><td>${ item.required }</td></tr></table>` 
                         : "" }
-                    ${ item.table  ? `<hr>${ item.table }` : ""}`)
+                    ${ item.costTable  ? `<hr>${ item.costTable }` : ""}
+                    ${ item.parent 
+                        ?  `<hr><table><tr><th>Prerequisites:</th><td>${ 
+                                item.parent.map(index => getItemTitle(XCOM_TECH_TREE[index])).join(" ") 
+                            }</td></tr></table>` 
+                        : "" }
+                    ${ item.children 
+                        ?  `<hr><table><tr><th>Unlocks:</th><td>${ 
+                                item.children.map(child => getItemTitle(child)).join(" ") 
+                            }</td></tr></table>` 
+                        : "" }
+                    </small>`)
                 .style("opacity", 1)
                 .style("left", `${ d3.event.pageX + 28 }px`)
                 .style("top", `${ d3.event.pageY }px`);
         })
         .on("mouseout", hideTooltip);
+}
+
+function getItemTitle(item) {
+    return `<span class="tag ${ item.type }">${ TYPE_INFO[item.type].icon } ${ item.title }</span>`;
 }
 
 function getCsv() {
@@ -484,9 +518,8 @@ function tools() {
     d3.select("#dlc-integrated")
         .on("click", () => {
             INTEGRATED_DLC = !INTEGRATED_DLC;
-            updateIntegrated();
-            resetHierarchy();
-            hierarchy();
+            updateTechTreeForDLC();
+            updateHierarchy();
             delayedUpdate();
         });
 }
