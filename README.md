@@ -29,10 +29,11 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [x] Sticky header
 - [ ] Complete all the resource costs, rework the difficulty breakdown to get rid of useless repeats and ?
 - [ ] Hover a node to highlight its neighbor connections
-- [ ] Tooltip should say its prequisites and unlocks (prev and next neighbors)
-- [ ] Tooltip should say what soldier class weapons belong to
+- [ ] Tooltip should say its prerequisites and unlocks (prev and next neighbors)
+- [x] Tooltip should say what soldier class weapons belong to
 - [ ] Show tooltips on legend items
-- [ ] Show DLC source on nodes/tooltips
-- [ ] Show extra info on tooltips
+- [x] Show DLC source on tooltips
+- [ ] Show description in tooltips
 - [ ] Fix Save action
 - [ ] Cleanup dead dev stuff
+- [ ] Handle Lost & Abandoned/Faction/Resistance Ring ordering
