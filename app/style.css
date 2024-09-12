@@ -27,6 +27,8 @@ hr {
 
 .top {
     position: sticky;
+    top: 0;
+    background: white;
 }
 
 .header {
@@ -41,7 +43,7 @@ hr {
     display: flex;
     align-items: center;
     gap: 5px;
-    margin-top: 14px;
+    padding-top: 14px;
 }
 
 .tools-label {
@@ -103,6 +105,7 @@ text {
 
 .chart-wrapper {
     width: 100%;
+    overflow: scroll;
 }
 
 .chart > * {

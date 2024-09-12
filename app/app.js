@@ -8,13 +8,14 @@ const TOOLTIP = d3.select('.tooltip');
 const FILTER = d3.select('#filter');
 let TRUNCATE_PATHS = true;
 let HORIZONTAL = false;
+let INTEGRATED_DLC = true;
 
 const TYPE_INFO = {
     "building": { icon: "🏗️", name: "Building", description: "Avenger building" },
     "research": { icon: "🔬", name: "Research", description: "Researcg project" },
     "proving": { icon: "🧪", name: "Proving Grounds", description: "Proving Grounds project" },
     "item": { icon: "🔫", name: "Item", description: "Engineering item (weapon, utility, armor, etc)" },
-    "drop": { icon: "🫳", name: "Drop", description: "Drop picked up in a mission" },
+    "drop": { icon: "🫳", name: "Pickup", description: "Item picked up in a mission" },
     "mission": { icon: "🧭", name: "Mission", description: "Mission" },
     "enhancement": { icon: "✨", name: "Enhancement", description: "Game mechanic enhancement" },
     "region": { icon: "📡", name: "Region", description: "Region unlocked on geoscape" },
@@ -26,13 +27,22 @@ const TYPES = Object.keys(TYPE_INFO);
 const DLC_INFO = {
     "wotc": { name: "War of the Chosen", abbr: "WotC" },
     "ah": { name: "Alien Hunters", abbr: "AH" },
-    "tlp": { name: "Tactical Legacy Pack", abbr: "TLP" },
+    "slg": { name: "Shen's Last Gift", abbr: "SLG" },
+    "tlp": { name: "Tactical Legacy Pack", abbr: "TLP" }
 }
 const DLC = Object.keys(DLC_INFO);
 const DLC_ENABLED = DLC.reduce((obj, key) => ({ ...obj, [key]: true }), {});
 
+const getDlcId = abbr => {
+    for (const [key, dlc] of Object.entries(DLC_INFO)) {
+        if (dlc.abbr == abbr) return key;
+    }
+}
+
 function run() {
     LEGEND_GRAPH = legend();
+    filter();
+    updateIntegrated();
     chart();
     legendClicks();
     filterChange();
@@ -49,6 +59,18 @@ function hierarchy() {
                     XCOM_TECH_TREE[index].children.push(item);
                 }
             });
+        }
+    });
+}
+
+function resetHierarchy() {
+    XCOM_TECH_TREE.forEach(item => item.children && (item.children.length = 0));
+}
+
+function updateIntegrated() {
+    XCOM_TECH_TREE.forEach(item => {
+        if (item.integrated) {
+            Object.assign(item, item.integrated[INTEGRATED_DLC]);
         }
     });
 }
@@ -186,6 +208,12 @@ function update() {
     reset();
     hideTooltip();
 
+    filter();
+    updateIntegrated();
+    chart();
+}
+
+function filter() {
     let filter = FILTER.node().value;
 
     filter = filter ? filter.toLowerCase() : null;
@@ -194,11 +222,10 @@ function update() {
         item.hide = false;
         item.disable = DISABLED[item.type] 
             || (filter && !(item.title.toLowerCase().indexOf(filter) > -1))
-            || (item.dlc && !DLC_ENABLED[item.dlc.toLowerCase()]);
+            || (item.dlc && !DLC_ENABLED[getDlcId(item.dlc)]);
     });
 
     hide();
-    chart();
 }
 
 function isVisible(item) {
@@ -206,18 +233,13 @@ function isVisible(item) {
         return false;
     }
 
-    if (!item.children) {
-        return !item.disable;
-    }
-
-    for (let i = 0; i < item.children.length; i++) {
-        const child = item.children[i];
-
-        if (isVisible(child)) {
-            return true;
+    if (item.children) {
+        for (const child of item.children) {
+            if (isVisible(child)) {
+                return true;
+            }
         }
     }
-
     return !item.disable;
 }
 
@@ -279,7 +301,7 @@ function getCostTable(item) {
 
         const r = getCostArray(item);
 
-        for (let k in r) {
+        for (const k in r) {
             text += '<tr>';
             text += '<th>' + k + '</th>';
             text += '<td>' + r[k].join('</td><td>') + '</td>';
@@ -350,7 +372,7 @@ function getCsv() {
 
         const a = getCostArray(item);
 
-        for (let k in a) {
+        for (const k in a) {
             const index = header.indexOf(k);
 
             if (index < 0) {
@@ -432,6 +454,9 @@ function tools() {
     d3.select("#dlc-wotc")
         .on("click", () => {
             DLC_ENABLED["wotc"] = !DLC_ENABLED["wotc"];
+            INTEGRATED_DLC = DLC_ENABLED["wotc"] && d3.select("#dlc-integrated").property("checked");
+            console.log("INTEGRATED DLC", INTEGRATED_DLC)
+            d3.select("#integrated-dlc").classed("hide", !DLC_ENABLED["wotc"]);
             delayedUpdate();
         });
 
@@ -441,9 +466,24 @@ function tools() {
             delayedUpdate();
         });
 
+    d3.select("#dlc-slg")
+        .on("click", () => {
+            DLC_ENABLED["slg"] = !DLC_ENABLED["slg"];
+            delayedUpdate();
+        });
+
     d3.select("#dlc-tlp")
         .on("click", () => {
             DLC_ENABLED["tlp"] = !DLC_ENABLED["tlp"];
+            delayedUpdate();
+        });
+
+    d3.select("#dlc-integrated")
+        .on("click", () => {
+            INTEGRATED_DLC = !INTEGRATED_DLC;
+            updateIntegrated();
+            resetHierarchy();
+            hierarchy();
             delayedUpdate();
         });
 }
