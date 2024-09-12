@@ -23,3 +23,15 @@ npm run pubish
 ### Deprecated
 
 All the `gulp` and `bower` related stuff is no longer used.
+
+### Todo
+
+- [ ] Sticky header
+- [ ] Complete all the resource costs, rework the difficulty breakdown to get rid of useless repeats and ?
+- [ ] Hover a node to highlight its neighbor connections
+- [ ] Tooltip should say its prequisites and unlocks (prev and next neighbors)
+- [ ] Tooltip should say what soldier class weapons belong to
+- [ ] Show tooltips on legend items
+- [ ] Show DLC source on nodes
+- [ ] Fix Save action
+- [ ] Cleanup dead dev stuff
