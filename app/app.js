@@ -326,7 +326,7 @@ function getSpecsTable(specs) {
     return `<hr>
     <table>
     ${ Object.keys(specs).map(key =>
-        `<tr><th>${ key }</th><td>${ specs[key] }</td></td>`
+        `<tr><th>${ key }:</th><td>${ specs[key] }</td></td>`
     ).join("") }
     </table>`;
 }
@@ -364,17 +364,32 @@ function tooltip() {
                     <br>
                     <i>${ type.icon } ${ type.fullname } </i>
                     ${ dlc ? `<i>${ dlc.icon } ${ dlc.name } DLC</i>` : "" }
+                    <small>
                     ${ item.specs ? getSpecsTable(item.specs) : "" }
                     ${ item.required 
-                        ? `<hr>
-                            <table><tr><th>Required</th><td>${ item.required }</td></tr></table>` 
+                        ? `<hr><table><tr><th>Required</th><td>${ item.required }</td></tr></table>` 
                         : "" }
-                    ${ item.costTable  ? `<hr><small>${ item.costTable }</small>` : ""}`)
+                    ${ item.costTable  ? `<hr>${ item.costTable }` : ""}
+                    ${ item.parent 
+                        ?  `<hr><table><tr><th>Prerequisites:</th><td>${ 
+                                item.parent.map(index => getItemTitle(XCOM_TECH_TREE[index])).join(" ") 
+                            }</td></tr></table>` 
+                        : "" }
+                    ${ item.children 
+                        ?  `<hr><table><tr><th>Unlocks:</th><td>${ 
+                                item.children.map(child => getItemTitle(child)).join(" ") 
+                            }</td></tr></table>` 
+                        : "" }
+                    </small>`)
                 .style("opacity", 1)
                 .style("left", `${ d3.event.pageX + 28 }px`)
                 .style("top", `${ d3.event.pageY }px`);
         })
         .on("mouseout", hideTooltip);
+}
+
+function getItemTitle(item) {
+    return `<span class="tag ${ item.type }">${ TYPE_INFO[item.type].icon } ${ item.title }</span>`;
 }
 
 function getCsv() {

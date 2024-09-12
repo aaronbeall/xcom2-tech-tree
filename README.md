@@ -29,7 +29,7 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [x] Sticky header
 - [ ] Complete all the resource costs, rework the difficulty breakdown to get rid of useless repeats and ?
 - [ ] Hover a node to highlight its neighbor connections
-- [ ] Tooltip should say its prerequisites and unlocks (prev and next neighbors)
+- [x] Tooltip should say its prerequisites and unlocks (prev and next neighbors)
 - [x] Tooltip should say what soldier class weapons belong to
 - [ ] Show tooltips on legend items
 - [x] Show DLC source on tooltips
