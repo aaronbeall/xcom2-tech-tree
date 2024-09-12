@@ -11,27 +11,26 @@ let HORIZONTAL = false;
 let INTEGRATED_DLC = true;
 
 const TYPE_INFO = {
-    "building": { icon: "🏗️", name: "Building", description: "Avenger building" },
-    "research": { icon: "🔬", name: "Research", description: "Researcg project" },
-    "proving": { icon: "🧪", name: "Proving Grounds", description: "Proving Grounds project" },
-    "item": { icon: "🔫", name: "Item", description: "Engineering item (weapon, utility, armor, etc)" },
-    "drop": { icon: "🫳", name: "Pickup", description: "Item picked up in a mission" },
-    "mission": { icon: "🧭", name: "Mission", description: "Mission" },
-    "enhancement": { icon: "✨", name: "Enhancement", description: "Game mechanic enhancement" },
-    "region": { icon: "📡", name: "Region", description: "Region unlocked on geoscape" },
-    "skill": { icon: "🪖", name: "Skill", description: "GTS Skill" },
-    "kill": { icon: "👽", name: "Kill", description: "Alien nuetralized during a mission" },
+    "building": { icon: "🏗️", name: "Building", fullname: "Building", description: "Avenger building" },
+    "research": { icon: "🔬", name: "Research", fullname: "Research project", description: "Research project" },
+    "proving": { icon: "🧪", name: "Proving Grounds", fullname: "Proving Grounds project" },
+    "item": { icon: "🔫", name: "Item", fullname: "Engineering item" },
+    "drop": { icon: "🫳", name: "Pickup", fullname: "Pickup from mission" },
+    "mission": { icon: "🧭", name: "Mission", fullname: "Mission" },
+    "enhancement": { icon: "✨", name: "Enhancement", fullname: "Game mechanic enhancement" },
+    "region": { icon: "📡", name: "Region", fullname: "Scan unlocked on geoscape" },
+    "skill": { icon: "🪖", name: "Skill", fullname: "GTS Skill" },
+    "kill": { icon: "👽", name: "Kill", fullname: "Alien nuetralized on mission" },
 }
 const TYPES = Object.keys(TYPE_INFO);
 
 const DLC_INFO = {
-    "wotc": { name: "War of the Chosen", abbr: "WotC" },
-    "ah": { name: "Alien Hunters", abbr: "AH" },
-    "slg": { name: "Shen's Last Gift", abbr: "SLG" },
-    "tlp": { name: "Tactical Legacy Pack", abbr: "TLP" }
+    "wotc": { name: "War of the Chosen", abbr: "WotC", icon: "😈" },
+    "ah": { name: "Alien Hunters", abbr: "AH", icon: "👽" },
+    "slg": { name: "Shen's Last Gift", abbr: "SLG", icon: "🤖" },
+    "tlp": { name: "Tactical Legacy Pack", abbr: "TLP", icon: "🪖" }
 }
-const DLC = Object.keys(DLC_INFO);
-const DLC_ENABLED = DLC.reduce((obj, key) => ({ ...obj, [key]: true }), {});
+const DLC_ENABLED = Object.keys(DLC_INFO).reduce((obj, key) => ({ ...obj, [key]: true }), {});
 
 const getDlcId = abbr => {
     for (const [key, dlc] of Object.entries(DLC_INFO)) {
@@ -322,8 +321,8 @@ function hideTooltip() {
 }
 
 function tooltip() {
-    d3.selectAll('svg.chart .node')
-        .on('click', index => {
+    d3.selectAll("svg.chart .node")
+        .on("click", index => {
             const item = XCOM_TECH_TREE[index];
             FILTER.node().value = item.title;
 
@@ -334,25 +333,29 @@ function tooltip() {
 
             delayedUpdate();
         })
-        .on('mousemove', index => {
+        .on("mousemove", index => {
             const item = XCOM_TECH_TREE[index];
+            const type = TYPE_INFO[item.type];
+            const dlc = item.dlc && DLC_INFO[getDlcId(item.dlc)];
 
             item.table = item.table || getCostTable(item);
 
             TOOLTIP
-                .attr('class', 'tooltip ' + item.type)
-                .html('<b>' + item.title + '</b>' +
-                    '<br>' +
-                    '<i>' + TYPE_INFO[item.type].name + '</i>' +
-                    (item.required ? '<hr>' +
-                    '<table><tr><th>Required</th><td>' + item.required + '</td></tr></table>' : '') +
-                    (item.table ? '<hr>' : '') +
-                    item.table)
-                .style('opacity', 1)
-                .style('left', (d3.event.pageX + 28) + 'px')
-                .style('top', (d3.event.pageY) + 'px');
+                .attr("class", `tooltip ${ item.type }`)
+                .html(`<b>${ item.title }</b>
+                    <br>
+                    <i>${ type.icon } ${ type.fullname } </i>
+                    ${ dlc ? `<i>${ dlc.icon } ${ dlc.name } DLC</i>` : "" }
+                    ${ item.required 
+                        ? `<hr>
+                            <table><tr><th>Required</th><td>${ item.required }</td></tr></table>` 
+                        : "" }
+                    ${ item.table  ? `<hr>${ item.table }` : ""}`)
+                .style("opacity", 1)
+                .style("left", `${ d3.event.pageX + 28 }px`)
+                .style("top", `${ d3.event.pageY }px`);
         })
-        .on('mouseout', hideTooltip);
+        .on("mouseout", hideTooltip);
 }
 
 function getCsv() {
