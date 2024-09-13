@@ -228,8 +228,9 @@ function filter() {
 
     filter = filter ? filter.toLowerCase() : null;
 
-    FILTER_LINK.attr("href", `https://duckduckgo.com/?q=%5C${ encodeURIComponent(`xcom.fandom.com ${ filter }`) }&l=1`);
+    FILTER_LINK.attr("href", getWikiUrl(filter));
     FILTER_LINK.style("display", filter ? "block" : "none");
+    FILTER_LINK.attr("title", `Visit wiki page for "${ filter }"`);
 
     XCOM_TECH_TREE.forEach(item => {
         item.hide = false;
@@ -239,6 +240,10 @@ function filter() {
     });
 
     hide();
+}
+
+function getWikiUrl(query) {
+    return `https://duckduckgo.com/?q=%5C${ encodeURIComponent(`site:xcom.fandom.com ${ query }`) }&l=1`;
 }
 
 function isDisabled(item) {
@@ -384,7 +389,7 @@ function tooltip() {
                                 item.children.map(child => getItemTitle(child)).join("") 
                             }</td></tr></table>` 
                         : "" }
-                    <small><em>&lt;Click to filter, Double-click to open Wiki&gt;</em></small>
+                    <small><em>&lt;Click to filter&gt;</em></small>
                     </small>`)
                 .style("opacity", 1)
                 .style("left", `${ d3.event.pageX + 28 }px`)
@@ -393,7 +398,7 @@ function tooltip() {
         .on("mouseout", hideTooltip)
         .on("dblclick", index => {
             const item = XCOM_TECH_TREE[index];
-            window.open(`https://duckduckgo.com/?q=%5C${ encodeURIComponent(`xcom.fandom.com ${ item.title }`) }&l=1`, "_blank");
+            window.open(getWikiUrl(item.title), "_blank");
         });
 }
 
