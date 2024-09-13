@@ -11,7 +11,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" crossorigin="anonymous">
 </head>
 
 <body>
@@ -20,16 +20,16 @@
         <div class="header">
             <img class="logo" src="xcom.png" height="45">
             <h1>XCOM 2 Tech Tree</h1>
+            <h2>Good luck, Commander!</h2>
         </div>
         <hr>
         <div class="top">
             <div class="toolbar">
                 <input type="search" id="filter" autofocus placeholder="Search">
-                <button id="save" href="#">save</button>
-                <button id="export" href="#">export</button>
                 <span class="tools-label">Display:</span>
                 <label class="toggle"><input type="checkbox" id="horizontal"><span>↧ Horizontal</span></label>
-                <label class="toggle"><input type="checkbox" id="shortcuts" checked><span>⋯ Truncate filter paths</span></label>
+                <label class="toggle"><input type="checkbox" id="shrink" checked><span>⋯ Shrink filter paths</span></label>
+                <label class="toggle"><input type="checkbox" id="children" checked><span>↳ Show filter children</span></label>
                 <span class="tools-label">DLC:</span>
                 <label class="toggle"><input type="checkbox" id="dlc-wotc" checked><span>😈 War of the Chosen</span></label>
                 <small id="integrated-dlc">(<label><input type="checkbox" id="dlc-integrated" checked><span>Integrated DLC</span></label>)</small>
@@ -44,6 +44,10 @@
                 </svg>
                 <button id="all">All</button>
                 <button id="none">None</button>
+                <span class="tools-label">Export:</span>
+                <button id="save-svg" href="#">SVG</button>
+                <button id="save-csv" href="#">CSV</button>
+                <button id="save-json" href="#">JSON</button>
             </div>
             <hr>
     </div>

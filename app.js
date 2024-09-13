@@ -6,7 +6,8 @@ const SVG = d3.select('svg.chart');
 const ROOT = SVG.select('g');
 const TOOLTIP = d3.select('.tooltip');
 const FILTER = d3.select('#filter');
-let TRUNCATE_PATHS = true;
+let SHRINK_FILTERED_PATHS = true;
+let SHOW_FILTERED_CHILDREN = true;
 let HORIZONTAL = false;
 let INTEGRATED_DLC = true;
 
@@ -128,7 +129,7 @@ function chart() {
         const radius = item.parent ? 11 : 0;
 
         if (!item.hide) {
-            const disabled = TRUNCATE_PATHS && item.disable;
+            const disabled = SHRINK_FILTERED_PATHS && item.disable;
 
             g.setNode(index, {
                 label: disabled ? '…' : `${ TYPE_INFO[item.type].icon } ${ item.title }`,
@@ -251,6 +252,18 @@ function isVisible(item) {
     return !item.disable;
 }
 
+function hasVisibleParent(item){
+    if (item.parent) {
+        for (const id of item.parent) {
+            const parent = XCOM_TECH_TREE[id];
+            if (!parent.disable) {
+                return true;
+            }
+            return hasVisibleParent(parent);
+        }
+    }
+}
+
 function hide() {
     XCOM_TECH_TREE.forEach(item => {
         if (!item.hide) {
@@ -259,6 +272,15 @@ function hide() {
             }
         }
     });
+    if (SHOW_FILTERED_CHILDREN) {
+        XCOM_TECH_TREE.forEach(item => {
+            if (item.hide) {
+                if (hasVisibleParent(item)) {
+                    item.hide = false;
+                }
+            }
+        });
+    }
 }
 
 function getSpecsTable(specs) {
@@ -338,12 +360,17 @@ function tooltip() {
                                 item.children.map(child => getItemTitle(child)).join("") 
                             }</td></tr></table>` 
                         : "" }
+                    <small><em>&lt;Click to filter, Double-click to open Wiki&gt;</em></small>
                     </small>`)
                 .style("opacity", 1)
                 .style("left", `${ d3.event.pageX + 28 }px`)
                 .style("top", `${ d3.event.pageY }px`);
         })
-        .on("mouseout", hideTooltip);
+        .on("mouseout", hideTooltip)
+        .on("dblclick", index => {
+            const item = XCOM_TECH_TREE[index];
+            window.open(`https://duckduckgo.com/?q=%5C${ encodeURIComponent(`xcom.fandom.com ${ item.title }`) }&l=1`);
+        });
 }
 
 function getItemTitle(item) {
@@ -351,44 +378,95 @@ function getItemTitle(item) {
 }
 
 function getCsv() {
-    const header = ['Id', 'Title', 'Type', 'Parent', 'Required',
-        'Supplies', 'Intel', 'Upkeep', 'Power', 'Elerium', 'Elerium Core', 'Alloy', 'Engineer', 'Scientist', 'Corpse'];
+    const headers = ["id", "title", "type"];
 
-    const rows = [header];
+    const rows = XCOM_TECH_TREE
+        .map(getRowValues)
+        .map(encodeCsvValues);
+    
+    return [
+        headers.join(","),
+        ...rows
+    ].join("\n");
 
-    XCOM_TECH_TREE.forEach(function (item, index) {
-        const row = [];
+    function getRowValues(item) {
+       return Object.entries(item).reduce((row, [key, value]) => {
+            setValueInRow(row, key, value, key);
+            return row;
+        }, []);
+    }
 
-        row.push(index);
-        row.push(item.title);
-        row.push(item.type);
-        row.push(item.parent ? item.parent.join(', ') : '');
-        row.push(item.required ? item.required : '');
+    function setValueInRow(row, key, value, column) {
+        switch (key) {
+            // Create variant columns for WotC and Integrated DLC
+            case "wotc":
+            case "integrated":
+                value.true && Object.keys(value.true).forEach(k => {
+                    setValueInRow(row, k, value.true[k], `${ k } (${ key })`)
+                });
+                value.false && Object.keys(value.false).forEach(k => {
+                    setValueInRow(row, k, value.false[k], k)
+                });
+                break;
 
-        const a = [];
+            // Ignored
+            case "children":
+            case "hide":
+            case "disable":
+                break;
 
-        for (const k in a) {
-            let index = header.indexOf(k);
+            // Populate column data in row
+            default:
+                if (!headers.includes(column)) headers.push(column);
+                const colIndex = headers.indexOf(column);
 
-            if (index < 0) {
-                index = header.length;
-                header.push(k);
-            }
+                if (row[colIndex]) return; // DLC overrides take precedent
 
-            row[index] = a[k].join(', ');
+                switch (key) {
+                    case "parent":
+                        // Expand parent ids into names
+                        row[colIndex] = value.map(index => XCOM_TECH_TREE[index].title).join(", ");
+                        break
+                    case "specs":
+                        // Convert object into "key: value" list
+                        row[colIndex] = Object.entries(value).map(([k, v]) => `${ k }: ${ v }`).join(", ");
+                        break;
+                    default:
+                        row[colIndex] = value;
+                        break;
+                }
+                break;
         }
+    }
+}
 
-        rows.push('"' + row.join('","') + '"');
-    });
+function encodeCsvValues(values) {
+    return values.map(encodeCsvValue).join(",");
+}
 
-    rows[0] = header.join(',');
+function encodeCsvValue(value) {
+    // Per https://www.ietf.org/rfc/rfc4180.txt
+    return `"${ String(value).replace(/"/g, `""`) }"`
+}
 
-    return rows.join('\n');
+function getJson() {
+    const cleaned = XCOM_TECH_TREE.map(
+        ({ hide, disable, children, ...cleaned }) => {
+            Object.keys({ 
+                ...cleaned.wotc && { ...cleaned.wotc.true, ...cleaned.wotc.false },
+                ...cleaned.integrated && { ...cleaned.integrated.true, ...cleaned.integrated.false },
+            }).forEach(key => {
+                delete cleaned[key];
+            });
+            return cleaned;
+        }
+    );
+    return JSON.stringify(cleaned, null, "  ");
 }
 
 function tools() {
 
-    d3.select('#save')
+    d3.select('#save-svg')
         .on('click', () => {
             const source = getSource(document.querySelectorAll('svg.chart')[0], getStyles(document));
             source[0] = source[0].replace(/dy="1em"/gi, 'dy="14"');
@@ -405,7 +483,7 @@ function tools() {
         });
 
 
-    d3.select('#export')
+    d3.select('#save-csv')
         .on('click', () => {
             const source = getCsv();
             const url = window.URL.createObjectURL(new Blob([source], {'type': 'text/csv'}));
@@ -420,15 +498,37 @@ function tools() {
             , 10);
         });
 
+
+    d3.select('#save-json')
+        .on('click', () => {
+            const source = getJson();
+            const url = window.URL.createObjectURL(new Blob([source], {'type': 'application/json'}));
+            const a = document.getElementById('download');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'xcom2-tech-tree.json');
+            a.style['display'] = 'none';
+            a.click();
+
+            setTimeout(() =>
+                window.URL.revokeObjectURL(url)
+            , 10);
+        });
+
     d3.select('#horizontal')
         .on('click', () => {
             HORIZONTAL = !HORIZONTAL;
             delayedUpdate();
         });
 
-    d3.select('#shortcuts')
+    d3.select('#shrink')
         .on('click', () => {
-            TRUNCATE_PATHS = !TRUNCATE_PATHS;
+            SHRINK_FILTERED_PATHS = !SHRINK_FILTERED_PATHS;
+            delayedUpdate();
+        });
+
+    d3.select('#children')
+        .on('click', () => {
+            SHOW_FILTERED_CHILDREN = !SHOW_FILTERED_CHILDREN;
             delayedUpdate();
         });
     
