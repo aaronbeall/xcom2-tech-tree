@@ -244,7 +244,7 @@ td {
 
 .kill {
     fill: #ff9090;
-    background-color: #fff0f0;
+    background-color: #ff9090;
 }
 
 .tag {
@@ -252,4 +252,5 @@ td {
     border-radius: 1em;
     padding: 0 .5em;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 1px;
 }
