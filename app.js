@@ -6,6 +6,7 @@ const SVG = d3.select('svg.chart');
 const ROOT = SVG.select('g');
 const TOOLTIP = d3.select('.tooltip');
 const FILTER = d3.select('#filter');
+const FILTER_LINK = d3.select('#wiki');
 let SHRINK_FILTERED_PATHS = true;
 let SHOW_FILTERED_CHILDREN = true;
 let HORIZONTAL = false;
@@ -226,6 +227,9 @@ function filter() {
     let filter = FILTER.node().value;
 
     filter = filter ? filter.toLowerCase() : null;
+
+    FILTER_LINK.attr("href", `https://duckduckgo.com/?q=%5C${ encodeURIComponent(`xcom.fandom.com ${ filter }`) }&l=1`);
+    FILTER_LINK.style("display", filter ? "block" : "none");
 
     XCOM_TECH_TREE.forEach(item => {
         item.hide = false;
