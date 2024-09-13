@@ -230,11 +230,27 @@ function filter() {
     XCOM_TECH_TREE.forEach(item => {
         item.hide = false;
         item.disable = DISABLED[item.type] 
-            || (filter && !(item.title.toLowerCase().indexOf(filter) > -1))
-            || (item.dlc && !DLC_ENABLED[getDlcId(item.dlc)]);
+            || (filter && !search(item, filter))
+            || !isEnabled(item);
     });
 
     hide();
+}
+
+function isEnabled(item) {
+    return !(item.dlc && !DLC_ENABLED[getDlcId(item.dlc)]);
+}
+
+function search(item, filter) {
+    const fields = [
+        item.title,
+        item.cost,
+        ...item.specs ? Object.values(item.specs) : [],
+        item.required
+    ];
+    return fields.some(value => 
+        !!value && value.toLowerCase().includes(filter)
+    );
 }
 
 function isVisible(item) {
@@ -253,7 +269,7 @@ function isVisible(item) {
 }
 
 function hasVisibleParent(item){
-    if (item.parent) {
+    if (isEnabled(item) && item.parent) {
         for (const id of item.parent) {
             const parent = XCOM_TECH_TREE[id];
             if (!parent.disable) {
