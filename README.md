@@ -37,13 +37,12 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [x] Tooltip should say what soldier class weapons belong to
 - [ ] Show tooltips on legend items
 - [x] Show DLC source on tooltips
-- [ ] Show description in tooltips
 - [ ] Fix Save SVG action
 - [ ] Cleanup dead dev stuff
 - [ ] Handle Lost & Abandoned impact
 - [ ] Re-sort data so it groups a little nicer?
 - [ ] Hide removed WotcC GTS skills when WotC is selected
-- [ ] Provide link to wiki for more details
+- [x] Provide link to wiki for more details
 - [ ] Option to show successors on filtering
 - [ ] Dark mode
 - [ ] Search details, not just title

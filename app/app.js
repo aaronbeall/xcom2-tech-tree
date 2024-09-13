@@ -338,12 +338,17 @@ function tooltip() {
                                 item.children.map(child => getItemTitle(child)).join("") 
                             }</td></tr></table>` 
                         : "" }
+                    <small><em>&lt;Click to filter, Double-click to open Wiki&gt;</em></small>
                     </small>`)
                 .style("opacity", 1)
                 .style("left", `${ d3.event.pageX + 28 }px`)
                 .style("top", `${ d3.event.pageY }px`);
         })
-        .on("mouseout", hideTooltip);
+        .on("mouseout", hideTooltip)
+        .on("dblclick", index => {
+            const item = XCOM_TECH_TREE[index];
+            window.open(`https://duckduckgo.com/?q=%5C${ encodeURIComponent(`xcom.fandom.com ${ item.title }`) }&l=1`);
+        });
 }
 
 function getItemTitle(item) {
