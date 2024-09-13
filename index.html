@@ -25,11 +25,11 @@
         <hr>
         <div class="top">
             <div class="toolbar">
-                <input type="search" id="filter" autofocus placeholder="Search (ex: Ranger)">
+                <input type="search" id="filter" autofocus placeholder="Search" title="Examples: 'ranger', 'trooper corpse', 'sword', etc.">
                 <span class="tools-label">Display:</span>
-                <label class="toggle"><input type="checkbox" id="horizontal"><span>↧ Horizontal</span></label>
-                <label class="toggle"><input type="checkbox" id="shrink" checked><span>⋯ Shrink filter paths</span></label>
-                <label class="toggle"><input type="checkbox" id="children" checked><span>↳ Show filter children</span></label>
+                <label class="toggle" title="Render the chart in horizontal mode."><input type="checkbox" id="horizontal"><span>↧ Horizontal</span></label>
+                <label class="toggle" title="Shrink nodes to [...] that are only visible as part of a path to a filter match."><input type="checkbox" id="shrink" checked><span>⋯ Shrink filter paths</span></label>
+                <label class="toggle" title="Show descendents of any node that matches the filter, excluding types that are disabled."><input type="checkbox" id="children" checked><span>↳ Show filter children</span></label>
                 <span class="tools-label">DLC:</span>
                 <label class="toggle"><input type="checkbox" id="dlc-wotc" checked><span>😈 War of the Chosen</span></label>
                 <small id="integrated-dlc">(<label><input type="checkbox" id="dlc-integrated" checked><span>Integrated DLC</span></label>)</small>
