@@ -67,10 +67,6 @@ hr {
     margin-left: 10px;
 }
 
-#wiki {
-    text-decoration: none;
-}
-
 .toolbar {
     display: flex;
     flex-wrap: wrap;
