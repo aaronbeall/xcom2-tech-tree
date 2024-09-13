@@ -14,11 +14,11 @@ const TYPE_INFO = {
     "building": { icon: "🏗️", name: "Building", fullname: "Building", description: "Avenger building" },
     "research": { icon: "🔬", name: "Research", fullname: "Research project", description: "Research project" },
     "proving": { icon: "🧪", name: "Proving Grounds", fullname: "Proving Grounds project" },
-    "item": { icon: "🔫", name: "Item", fullname: "Engineering item" },
+    "item": { icon: "🔫", name: "Item", fullname: "Item" },
     "drop": { icon: "🫳", name: "Pickup", fullname: "Pickup from mission" },
     "mission": { icon: "🧭", name: "Mission", fullname: "Mission" },
-    "enhancement": { icon: "✨", name: "Enhancement", fullname: "Game mechanic enhancement" },
-    "region": { icon: "📡", name: "Region", fullname: "Scan unlocked on geoscape" },
+    "enhancement": { icon: "✨", name: "Enhancement", fullname: "Game abilities/enhancement" },
+    "region": { icon: "📡", name: "Region", fullname: "Scan revealed on geoscape" },
     "skill": { icon: "🪖", name: "Skill", fullname: "GTS Skill" },
     "kill": { icon: "👽", name: "Kill", fullname: "Neutralize alien on mission" },
 }
@@ -261,74 +261,32 @@ function hide() {
     });
 }
 
-function getCostArray(item) {
-    const t = {};
-
-    if (item.cost) {
-        const r = {};
-        let k, i;
-        let m = 0;
-
-        for (i = 0; i < item.cost.length; i++) {
-            for (k in item.cost[i]) {
-                r[k] = r[k] || [];
-                r[k][i] = item.cost[i][k];
-                m = Math.max(m, i);
-            }
-        }
-
-
-        m++;
-
-        if (item.instantCost) {
-            for (i = 0; i < item.instantCost.length; i++) {
-                for (k in item.instantCost[i]) {
-                    r[k] = r[k] || [];
-                    r[k][i] += '/' + item.instantCost[i][k];
-                }
-            }
-        }
-
-        for (k in r) {
-            for (i = 0; i < m; i++) {
-                r[k][i] = r[k][i] !== undefined ? r[k][i] : '?';
-            }
-
-            t[k] = r[k];
-        }
-    }
-
-    return t;
-}
-
-function getCostTable(item) {
-    let text = '';
-
-    if (item.cost) {
-        text += '<table>';
-
-        const r = getCostArray(item);
-
-        for (const k in r) {
-            text += '<tr>';
-            text += '<th>' + k + '</th>';
-            text += '<td>' + r[k].join('</td><td>') + '</td>';
-            text += '</tr>';
-        }
-
-        text += '</table>';
-    }
-
-    return text;
-}
-
 function getSpecsTable(specs) {
-    return `<hr>
-    <table>
-    ${ Object.keys(specs).map(key =>
-        `<tr><th>${ key }:</th><td>${ specs[key] }</td></td>`
-    ).join("") }
-    </table>`;
+    return (`
+        <table>
+        ${ Object.keys(specs).map(key =>
+            `<tr><th>${ key }:</th><td>${ specs[key] }</td></td>`
+        ).join("") }
+        </table>
+    `);
+}
+
+function getCostTable(cost) {
+    return (`
+        <table>
+            <tr><th>Cost:</th><td>${ cost.replace(/, /g, "<br>") }</td></tr>
+        </table>
+    `);
+}
+
+function getBuildingTable(item) {
+    if (!item.power && !item.upkeep) return "";
+    return (`
+       <table>
+        ${ item.power ? `<tr><th>Power:</th><td>⚡️ ${ item.power }</td></tr>` : "" }
+        ${ item.upkeep ? `<tr><th>Upkeep:</th><td>${ item.upkeep }</td></tr>` : "" }
+       </table> 
+    `);
 }
 
 function hideTooltip() {
@@ -356,8 +314,6 @@ function tooltip() {
             const type = TYPE_INFO[item.type];
             const dlc = item.dlc && DLC_INFO[getDlcId(item.dlc)];
 
-            item.costTable = item.costTable || getCostTable(item);
-
             TOOLTIP
                 .attr("class", `tooltip ${ item.type }`)
                 .html(`<b>${ item.title }</b>
@@ -365,19 +321,21 @@ function tooltip() {
                     <i>${ type.icon } ${ type.fullname } </i>
                     ${ dlc ? `<i>${ dlc.icon } ${ dlc.name } DLC</i>` : "" }
                     <small>
-                    ${ item.specs ? getSpecsTable(item.specs) : "" }
+                    ${ item.specs ? `<hr>${ getSpecsTable(item.specs) }` : "" }
                     ${ item.required 
-                        ? `<hr><table><tr><th>Required</th><td>${ item.required }</td></tr></table>` 
+                        ? `<hr><table><tr><th>Required:</th><td>${ item.required }</td></tr></table>` 
                         : "" }
                     ${ item.costTable  ? `<hr>${ item.costTable }` : ""}
+                    ${ item.cost ? `<hr>${ getCostTable(item.cost) }` : "" }
+                    ${ item.type == "building" ? getBuildingTable(item) : "" }
                     ${ item.parent 
                         ?  `<hr><table><tr><th>Prerequisites:</th><td>${ 
-                                item.parent.map(index => getItemTitle(XCOM_TECH_TREE[index])).join(" ") 
+                                item.parent.map(index => getItemTitle(XCOM_TECH_TREE[index])).join("") 
                             }</td></tr></table>` 
                         : "" }
                     ${ item.children 
                         ?  `<hr><table><tr><th>Unlocks:</th><td>${ 
-                                item.children.map(child => getItemTitle(child)).join(" ") 
+                                item.children.map(child => getItemTitle(child)).join("") 
                             }</td></tr></table>` 
                         : "" }
                     </small>`)
@@ -407,10 +365,10 @@ function getCsv() {
         row.push(item.parent ? item.parent.join(', ') : '');
         row.push(item.required ? item.required : '');
 
-        const a = getCostArray(item);
+        const a = [];
 
         for (const k in a) {
-            const index = header.indexOf(k);
+            let index = header.indexOf(k);
 
             if (index < 0) {
                 index = header.length;

@@ -27,7 +27,7 @@ All the `gulp` and `bower` related stuff is no longer used.
 ### Todo
 
 - [x] Sticky header
-- [ ] Complete all the resource costs, rework the difficulty breakdown to get rid of useless repeats and ?
+- [x] Complete all the resource costs, rework the difficulty breakdown to get rid of useless repeats and ?
 - [ ] Hover a node to highlight its neighbor connections
 - [x] Tooltip should say its prerequisites and unlocks (prev and next neighbors)
 - [x] Tooltip should say what soldier class weapons belong to
@@ -36,4 +36,8 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [ ] Show description in tooltips
 - [ ] Fix Save action
 - [ ] Cleanup dead dev stuff
-- [ ] Handle Lost & Abandoned/Faction/Resistance Ring ordering
+- [ ] Handle Lost & Abandoned impact
+- [ ] Re-sort data so it groups a little nicer?
+- [ ] Hide removed WotcC GTS skills when WotC is selected
+- [ ] Provide link to wiki for more details
+- [ ] Option to show successors on filtering
