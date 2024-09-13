@@ -41,7 +41,7 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [ ] Cleanup dead dev stuff
 - [ ] Handle Lost & Abandoned impact
 - [ ] Re-sort data so it groups a little nicer?
-- [ ] Hide removed WotcC GTS skills when WotC is selected
+- [x] Hide removed WotcC GTS skills when WotC is selected
 - [x] Provide link to wiki for more details
 - [x] Option to show successors on filtering
 - [ ] Dark mode
