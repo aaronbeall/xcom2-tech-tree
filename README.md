@@ -6,7 +6,7 @@ Based on the excellent [XCOM 2 Tech Tree project from darosh](https://darosh.git
 
 ## Data
 
-The data used has been collected from a combination of the forked project's data, [XCOM2 Fandom Wiki](https://xcom.fandom.com/wiki/XCOM_2), and other sources online. There were conflicts and some obvious errors virtually all sources, what's here is a best attempt to merge them. Please report any errors, or even better modify the JSON data with corrections and your source.
+The data used has been collected from a combination of the forked project's data, [XCOM2 Fandom Wiki](https://xcom.fandom.com/wiki/XCOM_2), and other sources online. There were conflicts and some obvious errors virtually all sources, what's here is a best attempt to merge them. Please report any errors, or even better modify the JSON data with corrections and your source and submit an issue.
 
 ## Development
 
