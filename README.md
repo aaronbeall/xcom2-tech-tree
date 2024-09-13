@@ -45,5 +45,5 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [x] Provide link to wiki for more details
 - [x] Option to show successors on filtering
 - [ ] Dark mode
-- [ ] Search details, not just title
+- [x] Search details, not just title
 - [ ] Add LW2 content 😳
