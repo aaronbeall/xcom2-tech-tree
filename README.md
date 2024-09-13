@@ -35,7 +35,7 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [ ] Hover a node to highlight its neighbor connections
 - [x] Tooltip should say its prerequisites and unlocks (prev and next neighbors)
 - [x] Tooltip should say what soldier class weapons belong to
-- [ ] Show tooltips on legend items
+- [ ] Show tooltip descriptions on legend items
 - [x] Show DLC source on tooltips
 - [ ] Fix Save SVG action
 - [ ] Cleanup dead dev stuff
@@ -47,3 +47,4 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [ ] Dark mode
 - [x] Search details, not just title
 - [ ] Add LW2 content 😳
+- [ ] Some addition tooltip stuff: staffing, weapon abilities, building abilities
