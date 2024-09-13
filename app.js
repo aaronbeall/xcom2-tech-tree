@@ -389,7 +389,7 @@ function tooltip() {
         .on("mouseout", hideTooltip)
         .on("dblclick", index => {
             const item = XCOM_TECH_TREE[index];
-            window.open(`//duckduckgo.com/?q=!${ encodeURIComponent(`xcom.fandom.com ${ item.title }`) }&l=1`, "_blank");
+            window.open(`https://duckduckgo.com/?q=%5C${ encodeURIComponent(`xcom.fandom.com ${ item.title }`) }&l=1`, "_blank");
         });
 }
 
