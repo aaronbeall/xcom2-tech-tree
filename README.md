@@ -8,7 +8,7 @@ Based on the excellent [XCOM 2 Tech Tree project from darosh](https://darosh.git
 
 The data was orignally pulled from an [XML project](https://github.com/mstum/xcom2) that no longer exists, here the data is manually maintained in `xcom-tech-tree.min.js`. 
 
-Data has been collected from a combination of the original forked project's data, [XCOM2 Fandom Wiki](https://xcom.fandom.com/wiki/XCOM_2), and other sources online. There were conflicts and some obvious errors in virtually all sources, what's here is a best attempt to merge them most accurately. Please report any errors, or even better modify the JSON data with corrections, and submit an issue.
+Data has been collected from a combination of the original forked project's data, [XCOM2 Fandom Wiki](https://xcom.fandom.com/wiki/XCOM_2), and other sources online. There were conflicts and some obvious errors in virtually all sources, what's here is a best attempt to merge them most accurately. Please report any errors, or even better save and modify the JSON data with corrections, and submit an issue.
 
 ## Development
 
