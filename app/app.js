@@ -351,44 +351,95 @@ function getItemTitle(item) {
 }
 
 function getCsv() {
-    const header = ['Id', 'Title', 'Type', 'Parent', 'Required',
-        'Supplies', 'Intel', 'Upkeep', 'Power', 'Elerium', 'Elerium Core', 'Alloy', 'Engineer', 'Scientist', 'Corpse'];
+    const headers = ["id", "title", "type"];
 
-    const rows = [header];
+    const rows = XCOM_TECH_TREE
+        .map(getRowValues)
+        .map(encodeCsvValues);
+    
+    return [
+        headers.join(","),
+        ...rows
+    ].join("\n");
 
-    XCOM_TECH_TREE.forEach(function (item, index) {
-        const row = [];
+    function getRowValues(item) {
+       return Object.entries(item).reduce((row, [key, value]) => {
+            setValueInRow(row, key, value, key);
+            return row;
+        }, []);
+    }
 
-        row.push(index);
-        row.push(item.title);
-        row.push(item.type);
-        row.push(item.parent ? item.parent.join(', ') : '');
-        row.push(item.required ? item.required : '');
+    function setValueInRow(row, key, value, column) {
+        switch (key) {
+            // Create variant columns for WotC and Integrated DLC
+            case "wotc":
+            case "integrated":
+                value.true && Object.keys(value.true).forEach(k => {
+                    setValueInRow(row, k, value.true[k], `${ k } (${ key })`)
+                });
+                value.false && Object.keys(value.false).forEach(k => {
+                    setValueInRow(row, k, value.false[k], k)
+                });
+                break;
 
-        const a = [];
+            // Ignored
+            case "children":
+            case "hide":
+            case "disable":
+                break;
 
-        for (const k in a) {
-            let index = header.indexOf(k);
+            // Populate column data in row
+            default:
+                if (!headers.includes(column)) headers.push(column);
+                const colIndex = headers.indexOf(column);
 
-            if (index < 0) {
-                index = header.length;
-                header.push(k);
-            }
+                if (row[colIndex]) return; // DLC overrides take precedent
 
-            row[index] = a[k].join(', ');
+                switch (key) {
+                    case "parent":
+                        // Expand parent ids into names
+                        row[colIndex] = value.map(index => XCOM_TECH_TREE[index].title).join(", ");
+                        break
+                    case "specs":
+                        // Convert object into "key: value" list
+                        row[colIndex] = Object.entries(value).map(([k, v]) => `${ k }: ${ v }`).join(", ");
+                        break;
+                    default:
+                        row[colIndex] = value;
+                        break;
+                }
+                break;
         }
+    }
+}
 
-        rows.push('"' + row.join('","') + '"');
-    });
+function encodeCsvValues(values) {
+    return values.map(encodeCsvValue).join(",");
+}
 
-    rows[0] = header.join(',');
+function encodeCsvValue(value) {
+    // Per https://www.ietf.org/rfc/rfc4180.txt
+    return `"${ String(value).replace(/"/g, `""`) }"`
+}
 
-    return rows.join('\n');
+function getJson() {
+    const cleaned = XCOM_TECH_TREE.map(
+        ({ hide, disable, children, ...cleaned }) => {
+            Object.keys({ 
+                ...cleaned.wotc && { ...cleaned.wotc.true, ...cleaned.wotc.false },
+                ...cleaned.integrated && { ...cleaned.integrated.true, ...cleaned.integrated.false },
+            }).forEach(key => {
+                delete cleaned[key];
+            });
+            return cleaned;
+        }
+    );
+    return JSON.stringify(cleaned, null, "  ");
 }
 
 function tools() {
 
-    d3.select('#save')
+    d3.select('#save-svg')
         .on('click', () => {
             const source = getSource(document.querySelectorAll('svg.chart')[0], getStyles(document));
             source[0] = source[0].replace(/dy="1em"/gi, 'dy="14"');
@@ -405,13 +456,29 @@ function tools() {
         });
 
 
-    d3.select('#export')
+    d3.select('#save-csv')
         .on('click', () => {
             const source = getCsv();
             const url = window.URL.createObjectURL(new Blob([source], {'type': 'text/csv'}));
             const a = document.getElementById('download');
             a.setAttribute('href', url);
             a.setAttribute('download', 'xcom2-tech-tree.csv');
+            a.style['display'] = 'none';
+            a.click();
+
+            setTimeout(() =>
+                window.URL.revokeObjectURL(url)
+            , 10);
+        });
+
+
+    d3.select('#save-json')
+        .on('click', () => {
+            const source = getJson();
+            const url = window.URL.createObjectURL(new Blob([source], {'type': 'application/json'}));
+            const a = document.getElementById('download');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'xcom2-tech-tree.json');
             a.style['display'] = 'none';
             a.click();
 

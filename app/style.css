@@ -19,6 +19,14 @@ h1 {
     margin: 0;
 }
 
+h2 {
+    color: rgba(255, 255, 255, .2);
+    font-size: 16px;
+    font-weight: normal;
+    mix-blend-mode: overlay;
+    margin: auto 150px auto auto;
+}
+
 hr {
     margin: 14px 0;
     border: 0;
