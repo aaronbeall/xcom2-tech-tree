@@ -28,17 +28,14 @@
                 <input type="search" id="filter" autofocus placeholder="Search">
                 <span class="tools-label">Display:</span>
                 <label class="toggle"><input type="checkbox" id="horizontal"><span>↧ Horizontal</span></label>
-                <label class="toggle"><input type="checkbox" id="shortcuts" checked><span>⋯ Truncate filter paths</span></label>
+                <label class="toggle"><input type="checkbox" id="shrink" checked><span>⋯ Shrink filter paths</span></label>
+                <label class="toggle"><input type="checkbox" id="children" checked><span>↳ Show filter children</span></label>
                 <span class="tools-label">DLC:</span>
                 <label class="toggle"><input type="checkbox" id="dlc-wotc" checked><span>😈 War of the Chosen</span></label>
                 <small id="integrated-dlc">(<label><input type="checkbox" id="dlc-integrated" checked><span>Integrated DLC</span></label>)</small>
                 <label class="toggle"><input type="checkbox" id="dlc-ah" checked><span>👽 Alien Hunters</span></label>
                 <label class="toggle"><input type="checkbox" id="dlc-slg" checked><span>🤖 Shen's Last Gift</span></label>
                 <label class="toggle"><input type="checkbox" id="dlc-tlp" checked><span>🪖 Tactical Legacy Pack</span></label>
-                <span class="tools-label">Export:</span>
-                <button id="save-svg" href="#">SVG</button>
-                <button id="save-csv" href="#">CSV</button>
-                <button id="save-json" href="#">JSON</button>
             </div>
             <div class="toolbar">
                 <span class="tools-label">Filter:</span>
@@ -47,6 +44,10 @@
                 </svg>
                 <button id="all">All</button>
                 <button id="none">None</button>
+                <span class="tools-label">Export:</span>
+                <button id="save-svg" href="#">SVG</button>
+                <button id="save-csv" href="#">CSV</button>
+                <button id="save-json" href="#">JSON</button>
             </div>
             <hr>
     </div>

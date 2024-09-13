@@ -6,7 +6,8 @@ const SVG = d3.select('svg.chart');
 const ROOT = SVG.select('g');
 const TOOLTIP = d3.select('.tooltip');
 const FILTER = d3.select('#filter');
-let TRUNCATE_PATHS = true;
+let SHRINK_FILTERED_PATHS = true;
+let SHOW_FILTERED_CHILDREN = true;
 let HORIZONTAL = false;
 let INTEGRATED_DLC = true;
 
@@ -128,7 +129,7 @@ function chart() {
         const radius = item.parent ? 11 : 0;
 
         if (!item.hide) {
-            const disabled = TRUNCATE_PATHS && item.disable;
+            const disabled = SHRINK_FILTERED_PATHS && item.disable;
 
             g.setNode(index, {
                 label: disabled ? '…' : `${ TYPE_INFO[item.type].icon } ${ item.title }`,
@@ -251,6 +252,18 @@ function isVisible(item) {
     return !item.disable;
 }
 
+function hasVisibleParent(item){
+    if (item.parent) {
+        for (const id of item.parent) {
+            const parent = XCOM_TECH_TREE[id];
+            if (!parent.disable) {
+                return true;
+            }
+            return hasVisibleParent(parent);
+        }
+    }
+}
+
 function hide() {
     XCOM_TECH_TREE.forEach(item => {
         if (!item.hide) {
@@ -259,6 +272,15 @@ function hide() {
             }
         }
     });
+    if (SHOW_FILTERED_CHILDREN) {
+        XCOM_TECH_TREE.forEach(item => {
+            if (item.hide) {
+                if (hasVisibleParent(item)) {
+                    item.hide = false;
+                }
+            }
+        });
+    }
 }
 
 function getSpecsTable(specs) {
@@ -498,9 +520,15 @@ function tools() {
             delayedUpdate();
         });
 
-    d3.select('#shortcuts')
+    d3.select('#shrink')
         .on('click', () => {
-            TRUNCATE_PATHS = !TRUNCATE_PATHS;
+            SHRINK_FILTERED_PATHS = !SHRINK_FILTERED_PATHS;
+            delayedUpdate();
+        });
+
+    d3.select('#children')
+        .on('click', () => {
+            SHOW_FILTERED_CHILDREN = !SHOW_FILTERED_CHILDREN;
             delayedUpdate();
         });
     

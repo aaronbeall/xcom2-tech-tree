@@ -43,7 +43,7 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [ ] Re-sort data so it groups a little nicer?
 - [ ] Hide removed WotcC GTS skills when WotC is selected
 - [x] Provide link to wiki for more details
-- [ ] Option to show successors on filtering
+- [x] Option to show successors on filtering
 - [ ] Dark mode
 - [ ] Search details, not just title
 - [ ] Add LW2 content 😳
