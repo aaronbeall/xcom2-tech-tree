@@ -389,16 +389,16 @@ function tooltip() {
         .on("mouseout", hideTooltip)
         .on("dblclick", index => {
             const item = XCOM_TECH_TREE[index];
-            window.open(getWikiUrl(item.title), "_blank");
+            window.open(getWikiUrl(item.title), "_blank","noopener,noreferrer");
         });
 }
 
 function getWikiUrl(query) {
-    // Duck Duck Go has no interstitial redirect notice page, but doesn't work with a referrer (only works on localhost)
-    // return `https://duckduckgo.com/?q=%5C${ encodeURIComponent(`site:xcom.fandom.com ${ query }`) }&l=1`;
+    // Duck Duck Go has no interstitial redirect notice page, but has to have no referrer to work
+    return `https://duckduckgo.com/?q=%5C${ encodeURIComponent(`site:xcom.fandom.com ${ query }`) }&l=1`;
 
     // Google I'm Feeling Lucky links have an annoying redirect notice
-    return `https://www.google.com/search?btnI=I'm+Feeling+Lucky&q=${ encodeURIComponent(`site:xcom.fandom.com ${ query }`) }`;
+    // return `https://www.google.com/search?btnI=I'm+Feeling+Lucky&q=${ encodeURIComponent(`site:xcom.fandom.com ${ query }`) }`;
 }
 
 function getItemTitle(item) {
