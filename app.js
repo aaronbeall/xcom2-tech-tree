@@ -394,8 +394,8 @@ function tooltip() {
 }
 
 function getWikiUrl(query) {
-    // Duck Duck Go has no interstitial redirect notice page, but doesn't work with a referrer (only works on localhost)
-    return `https://duckduckgo.com/?q=%5C${ encodeURIComponent(`site:xcom.fandom.com ${ query }`) }&l=1`;
+    // Duck Duck Go has no interstitial redirect notice page, but has to have no referrer to work
+    return `https://duckduckgo.com/?q=%5C${ encodeURIComponent(`site:xcom.fandom.com xcom 2 ${ query }`) }&l=1`;
 
     // Google I'm Feeling Lucky links have an annoying redirect notice
     // return `https://www.google.com/search?btnI=I'm+Feeling+Lucky&q=${ encodeURIComponent(`site:xcom.fandom.com ${ query }`) }`;
