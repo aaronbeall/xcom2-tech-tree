@@ -11,6 +11,9 @@ let SHOW_FILTERED_CHILDREN = true;
 let HORIZONTAL = false;
 let INTEGRATED_DLC = true;
 
+// Because this app directly mutates XCOM_TECH_TREE to update the chart, keep a clone for reverting changes
+const XCOM_TECH_TREE_UNMODIFIED = JSON.parse(JSON.stringify(XCOM_TECH_TREE));
+
 const TYPE_INFO = {
     "building": { icon: "🏗️", name: "Building", fullname: "Building", description: "Avenger building" },
     "research": { icon: "🔬", name: "Research", fullname: "Research project", description: "Research project" },
@@ -361,7 +364,7 @@ function tooltip() {
                 .html(`<b>${ item.title }</b>
                     <br>
                     <i>${ type.icon } ${ type.fullname } </i>
-                    ${ dlc ? `<i>${ dlc.icon } ${ dlc.name } DLC</i>` : "" }
+                    ${ dlc ? `<i>${ dlc.icon } ${ dlc.name }</i>` : "" }
                     <small>
                     ${ item.specs ? `<hr>${ getSpecsTable(item.specs) }` : "" }
                     ${ item.required 
@@ -408,7 +411,7 @@ function getItemTitle(item) {
 function getCsv() {
     const headers = ["id", "title", "type"];
 
-    const rows = XCOM_TECH_TREE
+    const rows = XCOM_TECH_TREE_UNMODIFIED
         .map(getRowValues)
         .map(encodeCsvValues);
     
@@ -437,12 +440,6 @@ function getCsv() {
                 });
                 break;
 
-            // Ignored
-            case "children":
-            case "hide":
-            case "disable":
-                break;
-
             // Populate column data in row
             default:
                 if (!headers.includes(column)) headers.push(column);
@@ -456,8 +453,8 @@ function getCsv() {
                         row[colIndex] = value.map(index => XCOM_TECH_TREE[index].title).join(", ");
                         break
                     case "specs":
-                        // Convert object into "key: value" list
-                        row[colIndex] = Object.entries(value).map(([k, v]) => `${ k }: ${ v }`).join(", ");
+                        // Convert object into "prop: value" list
+                        row[colIndex] = Object.entries(value).map(([prop, val]) => `${ prop }: ${ val }`).join(", ");
                         break;
                     default:
                         row[colIndex] = value;
@@ -609,3 +606,16 @@ function tools() {
             delayedUpdate();
         });
 }
+
+function highlight(text){
+    Array.from(document.querySelectorAll("body, body *:not(script):not(style):not(noscript)"))
+      .flatMap(({ childNodes }) => [...childNodes])
+      .filter(({ nodeType, textContent }) => nodeType === document.TEXT_NODE && textContent.includes(text))
+      .forEach(textNode => textNode.replaceWith(...textNode.textContent.split(text).flatMap(part => [
+          document.createTextNode(part),
+          Object.assign(document.createElement("mark"), {
+            textContent: text
+          })
+        ])
+        .slice(0, -1))); // The above flatMap creates a [text, marked, text, marked, text, marked]-pattern. We need to remove the last superfluous marked.
+  }
