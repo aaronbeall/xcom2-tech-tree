@@ -48,4 +48,4 @@ All the `gulp` and `bower` related stuff is no longer used.
 - [x] Search details, not just title
 - [ ] Add LW2 content 😳
 - [ ] Some addition tooltip stuff: staffing, weapon abilities, building abilities
-- [ ] Highlight search matches
+- [ ] Highlight search matches in text
