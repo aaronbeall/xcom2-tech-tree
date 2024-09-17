@@ -1,6 +1,6 @@
 {
   "name": "xcom2-tech-tree",
-  "description": "xcom2-tech-tree dev dependencies",
+  "description": "XCOM 2 Tech Tree",
   "private": true,
   "version": "1.0.1",
   "scripts": {
