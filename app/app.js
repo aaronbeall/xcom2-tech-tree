@@ -310,7 +310,7 @@ function getSpecsTable(specs) {
     return (`
         <table>
         ${ Object.keys(specs).map(key =>
-            `<tr><th>${ key }:</th><td>${ specs[key] }</td></td>`
+            `<tr><th>${ key }:</th><td>${ specs[key].replace(/\n/g, "<br>") }</td></td>`
         ).join("") }
         </table>
     `);
@@ -321,16 +321,6 @@ function getCostTable(cost) {
         <table>
             <tr><th>Cost:</th><td>${ cost.replace(/, /g, "<br>") }</td></tr>
         </table>
-    `);
-}
-
-function getBuildingTable(item) {
-    if (!item.power && !item.upkeep) return "";
-    return (`
-       <table>
-        ${ item.power ? `<tr><th>Power:</th><td>⚡️ ${ item.power }</td></tr>` : "" }
-        ${ item.upkeep ? `<tr><th>Upkeep:</th><td>${ item.upkeep }</td></tr>` : "" }
-       </table> 
     `);
 }
 
@@ -358,6 +348,7 @@ function tooltip() {
             const item = XCOM_TECH_TREE[index];
             const type = TYPE_INFO[item.type];
             const dlc = item.dlc && DLC_INFO[getDlcId(item.dlc)];
+            const specs = item.specs || item.building;
 
             TOOLTIP
                 .attr("class", `tooltip ${ item.type }`)
@@ -366,13 +357,11 @@ function tooltip() {
                     <i>${ type.icon } ${ type.fullname } </i>
                     ${ dlc ? `<i>${ dlc.icon } ${ dlc.name }</i>` : "" }
                     <small>
-                    ${ item.specs ? `<hr>${ getSpecsTable(item.specs) }` : "" }
+                    ${ item.cost ? `<hr>${ getCostTable(item.cost) }` : "" }
+                    ${ specs ? `<hr>${ getSpecsTable(specs) }` : "" }
                     ${ item.required 
                         ? `<hr><table><tr><th>Required:</th><td>${ item.required }</td></tr></table>` 
                         : "" }
-                    ${ item.costTable  ? `<hr>${ item.costTable }` : ""}
-                    ${ item.cost ? `<hr>${ getCostTable(item.cost) }` : "" }
-                    ${ item.type == "building" ? getBuildingTable(item) : "" }
                     ${ item.parent 
                         ?  `<hr><table><tr><th>Prerequisites:</th><td>${ 
                                 item.parent.map(index => getItemTitle(XCOM_TECH_TREE[index])).join("") 
